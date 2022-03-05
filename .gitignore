@@ -1,0 +1,6 @@
+debug*
+*.sh
+tmp
+test_id*
+__pycache__
+results
