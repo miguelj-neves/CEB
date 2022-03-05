@@ -9,8 +9,9 @@ cd CEB
 * Create CEB environment
 ```bash
 conda create -n CEB
-conda env create -f env.yml
 conda activate CEB
+conda install pip
+pip install -r requirements.txt
 ```
 ## 2. Pre-trained model
 Located in directory: **model/socal_classifier.py**
