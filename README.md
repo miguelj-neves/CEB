@@ -14,7 +14,7 @@ pip install -r requirements.txt
 ```
 * Activate the CEB environment
 ```bash
-conda activate ceb
+conda activate CEB
 ```
 ## 2. Pre-trained model
 Located in directory: **model/socal_classifier.py**
