@@ -12,6 +12,10 @@ conda create -n CEB
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
+* Activate the CEB environment
+```bash
+conda activate ceb
+```
 ## 2. Pre-trained model
 Located in directory: **model/socal_classifier.py**
 ## 3. Batch prediction
