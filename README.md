@@ -9,11 +9,7 @@ cd CEB
 * Create CEB environment
 ```bash
 conda create -n CEB
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-* Activate the CEB environment
-```bash
+conda env create -f env.yml
 conda activate CEB
 ```
 ## 2. Pre-trained model
