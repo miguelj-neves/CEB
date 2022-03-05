@@ -20,6 +20,14 @@ def read_args():
 						default="../model/socal_classifier.h5",
 						type=str,
 						help="model/socal_classifier.h5")
+	parser.add_argument("--data_list",
+						default="../dataset/waveform.csv",
+						type=str,
+						help="../dataset/waveform.csv")
+	parser.add_argument("--data_dir",
+						default="../dataset/waveform_pred",
+						type=str,
+						help="../dataset/waveform_pred")
 	args = parser.parse_args()
 	return args
 
@@ -49,18 +57,17 @@ def evaluate(testgenerator, testlabel, model):
 
 if __name__ == "__main__":
 	args = read_args()
-	Dir = Dir(); hp = HyperParams()
-	conf = Config()
+	Dir = Dir(); hp = HyperParams(); conf = Config()
 	model = load_model(args.model)
 	params = {
-		'data_dir': Dir.waveform,
+		'data_dir': args.data_dir,
 		'batch_size': 100,
 		'MaxCutOnset': conf.MaxCutOnset,
 		'SliceLength': conf.newnpts,
 		'num_classes': len(conf.type_to_label),
 		'shuffle': False, # must be false
 		'TypeConvertLabel': conf.type_to_label}
-	df = pd.read_csv(Dir.fname_csv, delimiter=" ")
+	df = pd.read_csv(args.data_list, delimiter=" ")
 	label = df['eventtype']; IDs = df['id']; evid = df['evid']
 	test_generator = DataGenerator(IDs, **params)
 	test_label = [conf.type_to_label[x] for x in label]
