@@ -19,4 +19,4 @@ conda activate CEB
 ## 2. Pre-trained model
 Located in directory: **model/socal_classifier.py**
 ## 3. Batch prediction
-See details in the notebook: [example_batch_prediction.ipynb](docs/batch_prediction.ipynb)
+See details in the notebook: [example_batch_prediction.ipynb](docs/example_batch_prediction.ipynb)
