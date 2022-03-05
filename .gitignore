@@ -4,3 +4,4 @@ tmp
 test_id*
 __pycache__
 results
+*.zip
