@@ -1,6 +1,6 @@
 <p align="right">Last updated: 3 Mar 2022</p>
 
-## 1. Install Anaconda and requirements
+## 1. Install [Anaconda](https://www.anaconda.com/) and requirements
 * Download CEB repository
 ```bash
 git clone https://github.com/JUNZHU-SEIS/CEB.git
