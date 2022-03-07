@@ -14,6 +14,6 @@ conda install pip
 pip install -r requirements.txt
 ```
 ## 2. Pre-trained model
-Located in directory: **model/socal_classifier.py**
+Located in directory: **model/socal_classifier.h5**
 ## 3. Batch prediction
 See details in the notebook: [example_batch_prediction.ipynb](docs/example_batch_prediction.ipynb)
