@@ -12,7 +12,7 @@ class Config():
 	def __init__(self):
 		# buffer size for multiprocessing 
 		self.queue_size = 10
-		self.workers = 16
+		self.workers = 10
 		self.multiprocessing = True
 		# logging level
 		self.verbose = 1
@@ -41,8 +41,8 @@ class HyperParams():
 		self.dropout = .3
 		self.lr = 1e-3
 		self.l2_damping = 1e-4
-		self.batch_size = 64
-		self.epoch = 100
+		self.batch_size = 128
+		self.epoch = 50
 
 
 class Dir():

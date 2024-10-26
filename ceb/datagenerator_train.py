@@ -12,7 +12,7 @@ from tensorflow.keras.utils import to_categorical as onehot
 from config import Config, HyperParams, Dir
 
 
-class DataGenerator(Sequence):
+class DataGenerator_Train(Sequence):
 	"""Custom data generator for CEB
 		list_IDs: the id of those test recordings
 		data_dir: the folder storing the waveform files
@@ -71,9 +71,42 @@ class DataGenerator(Sequence):
 		if self.shuffle:
 			np.random.shuffle(self.indexes)
 
+
+
 	def __data_generation(self, list_IDs_tmp):
 		"""generate data of mini-batch size"""
 
+		def channel_drop(sample):
+			"""drop one channel randomly"""
+			nchannels = np.random.randint(2)
+			if nchannels == 0:
+				channel_drop = np.random.randint(3)
+				sample[:, channel_drop] = np.zeros(sample.shape[0])
+			else:
+				channel_drop = np.random.choice([0,1,2], size=2, replace=False)
+				sample[:, channel_drop[0]] = np.zeros(sample.shape[0])
+				sample[:, channel_drop[1]] = np.zeros(sample.shape[0])
+			return sample
+	
+		def add_gaps(sample):
+			"""add gaps to the waveform"""
+			gap_length = np.random.randint(100, 1100)
+			gap_indexes = np.arange(gap_length)+np.random.randint(sample.shape[0]-gap_length)
+			sample[gap_indexes,:] = np.zeros((gap_length, sample.shape[1]))
+			return sample
+
+		def waveform_clip(sample):
+			"""clip the waveform"""
+			percent = np.random.randint(1, 50)
+			sample = np.clip(sample, -1*np.percentile(abs(sample), percent), np.percentile(abs(sample), percent))
+			return sample
+
+		def add_noise(sample):
+			"""add noise to the waveform"""
+			noise = np.random.normal(-1, 1, sample.shape)
+			sample = sample + noise*np.nanmax(abs(sample), axis=1).reshape(-1,1)*0.2
+			return sample
+	
 		X = np.zeros((self.batch_size, *self.shape, self.num_channels))
 		y = np.empty((self.batch_size), dtype=int)
 		for i, ID in enumerate(list_IDs_tmp):
@@ -85,13 +118,31 @@ class DataGenerator(Sequence):
 			# a sample with a random onset
 			sample = np.transpose(data['wf'][:, randomonset:randomonset+self.SliceLength])
 			sample = np.nan_to_num(sample, nan=0.0)
-			
+			#print(np.isnan(np.sum(sample)))
+			psignal = np.nansum((data['wf'][:, 500:1000] - np.nanmean(data['wf'][:, 500:1000], axis=1).reshape(-1,1))**2)
+			pnoise = np.nansum((data['wf'][:, :500 ] - np.nanmean(data['wf'][:, :500], axis=1).reshape(-1,1))**2)
+			snr = np.mean(10*np.log10(psignal/pnoise))
+			if snr > 1:
+				augment_method = np.random.choice([0, 1, 2 , 3], p=[0.3, 0.2, 0.3, 0.2])
+				#print("Augment", augment_method)
+				#augment_method = np.random.choice([0, 1, 2 , 3], p=[0, 0, 0, 1])
+				if augment_method == 0:
+					sample = channel_drop(sample)
+				elif augment_method == 1:
+					sample = add_gaps(sample)
+				elif augment_method == 2:
+					sample = waveform_clip(sample)
+				elif augment_method == 3:
+					sample = add_noise(sample)
 			# normalized by the maximum standard error among three components'
+			#print(np.max(np.std(sample, axis=0)))
 			normalization = np.max(np.std(sample, axis=0)) + 0.00000001
 			#print(normalization)
 			X[i, :sample.shape[0]] = sample.reshape(sample.shape[0], 1, self.num_channels) /	normalization
 			y[i] = self.TypeConvertLabel[str(data['label'])]
 		return X, onehot(y, num_classes=self.num_classes)
+	
+	
 
 
 if __name__ == "__main__":
@@ -110,7 +161,7 @@ if __name__ == "__main__":
 	df = pd.read_csv(Dir.fname_csv,  delimiter=" ")
 	partition = df['id']
 	# Generator
-	train_generator = DataGenerator(partition, **params)
+	train_generator = DataGenerator_Train(partition, **params)
 	# test for a sample
 	X, Y = train_generator.__getitem__(0)
 	sample_in_batch = np.random.randint(params['batch_size'])
