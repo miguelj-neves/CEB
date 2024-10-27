@@ -47,7 +47,7 @@ def read_args():
 
 def Train(train_generator, validate_generator, model, output_dir, output_name):
 	# configure the model
-	earlystop = EarlyStopping(monitor='loss', patience=5, mode='min', restore_best_weights=True)
+	earlystop = EarlyStopping(monitor='loss', patience=3, mode='min', restore_best_weights=True)
 	best_save = ModelCheckpoint('./new_model/{epoch:02d}-{val_loss:.2f}.best_val.hdf5', save_best_only=False, monitor='val_loss', save_weights_only=False, mode="auto", save_freq="epoch", initial_value_threshold=None)
 	model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate=hp.lr), metrics=['categorical_crossentropy', 'accuracy'])
 	# train the model

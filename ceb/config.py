@@ -42,7 +42,7 @@ class HyperParams():
 		self.lr = 1e-3
 		self.l2_damping = 1e-4
 		self.batch_size = 128
-		self.epoch = 50
+		self.epoch = 10
 
 
 class Dir():
