@@ -9,12 +9,18 @@ import argparse
 import numpy as np
 import pandas as pd
 from keras.models import load_model
-from tensorflow.keras.optimizers import Adam
-from keras.callbacks import EarlyStopping, ModelCheckpoint
+#from tensorflow.keras.optimizers import Adam
+
+from keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateScheduler
 from config import Dir, Config, HyperParams
 from datagenerator import DataGenerator
 from datagenerator_train import DataGenerator_Train
 
+import platform
+if platform.system() == "Darwin" and platform.processor() == "arm":
+    from tensorflow.keras.optimizers.legacy import Adam
+else:
+    from tensorflow.keras.optimizers import Adam
 
 def read_args():
 	parser = argparse.ArgumentParser()
@@ -45,13 +51,28 @@ def read_args():
 	args = parser.parse_args()
 	return args
 
+def lr_schedule(epoch, lr=1e-4):
+	"""the schedule for learning rate
+		lr: the learning rate of the first epoch
+	"""
+
+	if epoch > 40:
+		lr *= .5e-3
+	elif epoch > 20:
+		lr *= 1e-2
+	elif epoch >10:
+		lr *= 1e-1
+	print('Learning rate: ', lr)
+	return lr
+
 def Train(train_generator, validate_generator, model, output_dir, output_name):
 	# configure the model
+	scheduler = LearningRateScheduler(lr_schedule)
 	earlystop = EarlyStopping(monitor='loss', patience=3, mode='min', restore_best_weights=True)
 	best_save = ModelCheckpoint('./new_model/{epoch:02d}-{val_loss:.2f}.best_val.hdf5', save_best_only=False, monitor='val_loss', save_weights_only=False, mode="auto", save_freq="epoch", initial_value_threshold=None)
-	model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate=hp.lr), metrics=['categorical_crossentropy', 'accuracy'])
+	model.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=['categorical_crossentropy', 'accuracy'])
 	# train the model
-	history = model.fit(train_generator, validation_data=validate_generator, epochs=hp.epoch, callbacks=[earlystop, best_save], verbose=1, workers=4, use_multiprocessing=True)
+	history = model.fit(train_generator, validation_data=validate_generator, epochs=hp.epoch, callbacks=[scheduler, earlystop, best_save], verbose=1, workers=4, use_multiprocessing=True)
 	if not os.path.exists(output_dir):
 		os.mkdir(output_dir)
 	fname = os.path.join(output_dir, output_name)

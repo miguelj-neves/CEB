@@ -121,7 +121,7 @@ class DataGenerator_Train(Sequence):
 			#print(np.isnan(np.sum(sample)))
 			psignal = np.nansum((data['wf'][:, 500:1000] - np.nanmean(data['wf'][:, 500:1000], axis=1).reshape(-1,1))**2)
 			pnoise = np.nansum((data['wf'][:, :500 ] - np.nanmean(data['wf'][:, :500], axis=1).reshape(-1,1))**2)
-			snr = np.mean(10*np.log10(psignal/pnoise))
+			snr = np.nanmean(10*np.log10(psignal/pnoise))
 			if snr > 1:
 				augment_method = np.random.choice([0, 1, 2 , 3], p=[0.3, 0.2, 0.3, 0.2])
 				#print("Augment", augment_method)

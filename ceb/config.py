@@ -39,10 +39,10 @@ class HyperParams():
 
 	def __init__(self):
 		self.dropout = .3
-		self.lr = 1e-3
+		self.lr = 1e-4
 		self.l2_damping = 1e-4
 		self.batch_size = 128
-		self.epoch = 10
+		self.epoch = 25
 
 
 class Dir():
