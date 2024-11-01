@@ -51,7 +51,7 @@ def read_args():
 						help="new_model.h5")
 	parser.add_argument("--initial_lr",
 						default=0.01,
-						type=str,
+						type=float,
 						help="learning rate")
 	args = parser.parse_args()
 	return args
