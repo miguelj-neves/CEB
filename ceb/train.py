@@ -70,13 +70,13 @@ def lr_schedule(epoch, lr=1e-4):
 	print('Learning rate: ', lr)
 	return lr
 
-def Train(train_generator, validate_generator, model, output_dir, output_name, initial_lr):
+def Train(train_generator, validate_generator, model, output_dir, output_name):
 	# configure the model
 	#scheduler = LearningRateScheduler(lr_schedule)
 	reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=3, min_lr=0.00001)
 	earlystop = EarlyStopping(monitor='val_loss', patience=5, mode='min', restore_best_weights=True, min_delta = 0.01, verbose = 1)
 	best_save = ModelCheckpoint(output_dir+'/{epoch:02d}-{val_loss:.3f}.best_val.hdf5', save_best_only=False, monitor='val_loss', save_weights_only=False, mode="auto", save_freq="epoch", initial_value_threshold=None)
-	model.compile(loss='categorical_crossentropy', optimizer=Adam(learning_rate=initial_lr, ), metrics=['categorical_crossentropy', 'accuracy'])
+	model.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=['categorical_crossentropy', 'accuracy'])
 	# train the model
 	history = model.fit(train_generator, validation_data=validate_generator, epochs=hp.epoch, callbacks=[reduce_lr, earlystop, best_save], verbose=1, workers=4, use_multiprocessing=True)
 	if not os.path.exists(output_dir):
@@ -117,7 +117,7 @@ if __name__ == "__main__":
 		dropout = 0.3
 		model = cnn(input_shape, dropout, lr=lr,num_classes_output=num_classes_output, l2_damping=l2_damping)
 	else:
-		lr = 0.001
+		lr = args.initial_lr
 		l2_damping = 1e-3
 		dropout = 0.3
 		original_model = load_model(args.starting_model)
@@ -138,6 +138,6 @@ if __name__ == "__main__":
 	#	exit(0)
 	train_generator = DataGenerator_Train(new_train_df['id'], **params)
 	validate_generator = DataGenerator(valid_df['id'], **params)
-	Train(train_generator, validate_generator, model, output_dir=args.result_dir, output_name=args.output_model, initial_lr=args.initial_lr)
+	Train(train_generator, validate_generator, model, output_dir=args.result_dir, output_name=args.output_model)
 	#predict_generator = DataGenerator(predict_id, **params)
 	#Predict(predict_id, predict_generator, model, output_dir=args.result_dir)
