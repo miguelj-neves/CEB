@@ -73,13 +73,13 @@ def lr_schedule(epoch, lr=1e-4):
 def Train(train_generator, validate_generator, model, output_dir, output_name):
 	# configure the model
 	#scheduler = LearningRateScheduler(lr_schedule)
-	reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=3, min_lr=0.00001)
-	earlystop = EarlyStopping(monitor='val_loss', patience=5, mode='min', restore_best_weights=True, min_delta = 0.01, verbose = 1)
+	reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.1, patience=3, min_lr=0.00001, min_delta = 0.01, verbose = 1)
+	earlystop = EarlyStopping(monitor='val_loss', patience=6, mode='min', restore_best_weights=True, min_delta = 0.01, verbose = 1)
 	best_save = ModelCheckpoint(output_dir+'/{epoch:02d}-{val_loss:.3f}.best_val.hdf5', save_best_only=False, monitor='val_loss', save_weights_only=False, mode="auto", save_freq="epoch", initial_value_threshold=None)
 	model.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=['categorical_crossentropy', 'accuracy'])
 
 	print(model.optimizer.get_config())
-	
+
 	# train the model
 	history = model.fit(train_generator, validation_data=validate_generator, epochs=hp.epoch, callbacks=[reduce_lr, earlystop, best_save], verbose=1, workers=4, use_multiprocessing=True)
 	if not os.path.exists(output_dir):
