@@ -15,6 +15,7 @@ from keras.callbacks import EarlyStopping, ModelCheckpoint, LearningRateSchedule
 from config import Dir, Config, HyperParams
 from datagenerator import DataGenerator
 from datagenerator_train import DataGenerator_Train
+from cnn_classifier import cnn
 
 import platform
 if platform.system() == "Darwin" and platform.processor() == "arm":
