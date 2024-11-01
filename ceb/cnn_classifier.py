@@ -27,12 +27,13 @@ def lr_schedule(epoch, lr=1e-3):
 	return lr
 
 
-def cnn(input_shape, dropout, lr=0.1, num_classes_output=2):
+def cnn(input_shape, dropout=0.3, lr=0.1, num_classes_output=2, l2_damping=1e-4):
 	"""set the architecture and configuration of the CNN model
 		params:
 			1. input shape
 			2. dropout rate
 			3. **kwargs: learning rate; number of classes
+			4. l2_damping: the damping factor of the L2 regularization
 		output:
 			1. the CNN model
 	"""
@@ -40,7 +41,6 @@ def cnn(input_shape, dropout, lr=0.1, num_classes_output=2):
 	K.clear_session()
 	# configuration of the convolutional layer
 	kernel_size, conv_strides = (3, 1), (2, 1)
-	l2_damping = 1e-4
 	# configuration of the max pooling layer
 	pool_size, pool_strides = (3, 1), 1
 	# loss function
