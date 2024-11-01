@@ -93,8 +93,8 @@ def cnn(input_shape, dropout=0.3, lr=0.1, num_classes_output=2, l2_damping=1e-4)
 		Dense(num_classes_output, activation = 'softmax')],
 		name = 'Classifier')
 	# compile the CNN model
-	classifier.compile(loss=loss_function, metrics=['accuracy'],
-			optimizer=Adam(learning_rate=lr_schedule(0, lr=lr)))
+	#classifier.compile(loss=loss_function, metrics=['accuracy'],
+	#		optimizer=Adam(learning_rate=lr_schedule(0, lr=lr)))
 	return classifier
 
 
