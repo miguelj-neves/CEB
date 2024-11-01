@@ -128,7 +128,7 @@ if __name__ == "__main__":
 		model = cnn(input_shape, dropout, lr=lr,num_classes_output=num_classes_output, l2_damping=l2_damping)
 		# Copy the weights from the original model to the new model
 		model.set_weights(original_model.get_weights())
-		model.trainable = False
+		model.trainable = True
 	
 	
 	
